@@ -5,7 +5,7 @@
 node_modules
 
 # environment variables
-.env.local
+.env
 
 # next.js build
 .next
