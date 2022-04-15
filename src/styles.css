@@ -1,3 +1,57 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+@layer base {
+  ::selection {
+    @apply bg-blue-800 text-blue-50;
+  }
+
+  html {
+    @apply min-w-[360px] scroll-smooth;
+  }
+
+  #__next {
+    @apply flex min-h-screen flex-col;
+  }
+}
+
+@layer components {
+  .wrapper {
+    @apply px-4 md:container md:mx-auto md:px-8;
+  }
+
+  .button-base {
+    @apply rounded-md border border-transparent py-2 px-4 text-sm font-medium shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:translate-y-1 active:transition-transform;
+  }
+
+  .button-primary {
+    @apply button-base bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:ring-indigo-500 focus-visible:ring-offset-white;
+  }
+
+  .button-secondary {
+    @apply button-base bg-zinc-600 text-white hover:bg-zinc-700 focus-visible:ring-zinc-500 focus-visible:ring-offset-white;
+  }
+}
+
+@layer utilities {
+  .action {
+    @apply hover:hover focus-visible:focus active:active;
+  }
+
+  .hover {
+    @apply opacity-50 transition-opacity;
+  }
+
+  .focus {
+    @apply ring-2 ring-indigo-500 ring-offset-2 focus:outline-none;
+  }
+
+  .active {
+    @apply translate-y-1 transition-transform;
+  }
+
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+}
