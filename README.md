@@ -1,4 +1,4 @@
-# `mozabrick-clone 🌄`
+# `colorfield 🌄`
 
 <details>
   <summary>Next.js Docs</summary>
