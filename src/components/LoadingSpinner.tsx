@@ -1,6 +1,10 @@
-import classNames from 'classnames/dedupe';
+import classNames from 'utils/classNames';
 
-export default function LoadingSpinner(props: { className?: string }) {
+type LoadingSpinnerProps = {
+  className?: string;
+};
+
+export default function LoadingSpinner(props: LoadingSpinnerProps) {
   return (
     <svg
       className={classNames('h-10 w-10 animate-spin text-indigo-500', props.className)}

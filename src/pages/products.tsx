@@ -1,77 +1,35 @@
-import Link from 'next/link';
-import { FastArrowRight } from 'iconoir-react';
-import Container from 'components/Container';
+import { useState, useEffect } from 'react';
+import { isEmpty } from 'lodash';
+
+import Layout from 'components/Layout';
+import ProductShowcase from 'components/Shop/ProductShowcase';
+import LoadingSpinner from 'components/LoadingSpinner';
 
 export default function Products() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      const response = await fetch('/api/products');
+      setProducts(await response.json());
+    }
+
+    fetchProducts();
+  }, []);
+
   return (
-    <Container title="404 – COLORFIELD">
+    <Layout title="Каталог – COLORFIELD">
       <h2 className="sr-only">Products</h2>
 
-      <div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-3 lg:gap-x-8">
-        <div className="relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
-          <div className="aspect-w-3 aspect-h-4 bg-gray-200 sm:aspect-none sm:h-96">
-            <div className="h-full w-full object-cover object-center sm:h-full sm:w-full"></div>
+      <div className="grid grid-cols-3 gap-4">
+        {isEmpty(products) ? (
+          <div className="col-span-full flex justify-center">
+            <LoadingSpinner />
           </div>
-
-          <div className="flex flex-1 flex-col space-y-2 p-4">
-            <h3 className="text-sm font-medium text-gray-900">
-              <span className="inline-flex items-center rounded bg-indigo-100 px-2.5 py-1 text-xs font-medium text-indigo-800">
-                <svg
-                  className="mr-1.5 h-2 w-2 text-indigo-400"
-                  fill="currentColor"
-                  viewBox="0 0 8 8"
-                >
-                  <circle cx={4} cy={4} r={3} />
-                </svg>
-                В наличии
-              </span>
-            </h3>
-
-            <p className="text-sm text-gray-500">Цветовая гамма: монохромная</p>
-            <p className="text-sm text-gray-500">Количество цветов: 50</p>
-            <p className="text-sm text-gray-500">Размер: СЕЛЕКТОР</p>
-
-            <div className="flex flex-1 flex-col justify-end">
-              <p className="text-base font-medium text-gray-900">2000 руб.</p>
-            </div>
-          </div>
-
-          <a href="#" className="button-secondary m-4 mt-0 bg-zinc-400 text-center text-xl">
-            Добавить в корзину
-          </a>
-        </div>
-
-        <div className="relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
-          <div className="aspect-w-3 aspect-h-4 bg-gray-200 sm:aspect-none sm:h-96">
-            <div className="h-full w-full object-cover object-center sm:h-full sm:w-full"></div>
-          </div>
-
-          <div className="flex flex-1 flex-col space-y-2 p-4">
-            <h3 className="text-sm font-medium text-gray-900">
-              <span className="inline-flex items-center rounded bg-red-100 px-2.5 py-1 text-xs font-medium text-red-800">
-                <svg className="mr-1.5 h-2 w-2 text-red-400" fill="currentColor" viewBox="0 0 8 8">
-                  <circle cx={4} cy={4} r={3} />
-                </svg>
-                Нет в наличии
-              </span>
-            </h3>
-
-            <p className="text-sm text-gray-500">Тип: холст</p>
-            <p className="text-sm text-gray-500">Размер: СЕЛЕКТОР</p>
-
-            <div className="flex flex-1 flex-col justify-end">
-              <p className="text-base font-medium text-gray-900">5000 руб.</p>
-            </div>
-          </div>
-
-          <a
-            href="#"
-            className="button-secondary m-4 mt-0 bg-zinc-400 text-center text-xl hover:cursor-not-allowed"
-          >
-            Добавить в корзину
-          </a>
-        </div>
+        ) : (
+          products.map((product: any) => <ProductShowcase key={product.id} {...product} />)
+        )}
       </div>
-    </Container>
+    </Layout>
   );
 }

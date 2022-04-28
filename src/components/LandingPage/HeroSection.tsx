@@ -1,48 +1,118 @@
-import classNames from 'classnames';
-import Link from 'next/link';
-import { FastArrowRight } from 'iconoir-react';
-import Preview from 'components/Preview';
+import { ArrowRight } from 'iconoir-react';
+import classNames from 'utils/classNames';
 
-export default function HeroSection(props: { className?: string }) {
+import Carousel from 'components/Carousel';
+import CarouselSlide from 'components/CarouselSlide';
+import ButtonLink from 'components/ButtonLink';
+
+type HeroSectionProps = {
+  className?: string;
+};
+
+export default function HeroSection(props: HeroSectionProps) {
   return (
-    <div className={classNames('relative', props.className)}>
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 -mx-4 rounded-bl-lg rounded-br-lg bg-zinc-200 md:-mx-8"
-      />
-
-      <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-8 lg:space-y-0">
-        <div className="flex flex-col justify-center">
-          <h1 className="text-2xl font-extrabold uppercase tracking-tight text-zinc-800 md:text-4xl">
-            <span className="mr-2 md:flex">Стань новым Давинчи</span>
-            <span>с картинами от Colorfield</span>
+    <section
+      className={classNames(
+        'relative flex flex-col overflow-hidden rounded-lg bg-white lg:flex-row',
+        props.className
+      )}
+    >
+      <div className="flex flex-col items-center justify-center p-8 text-center lg:w-[60%] lg:items-start lg:text-left">
+        <div className="space-y-3">
+          <h1 className="relative z-[1] grid grid-rows-2 text-4xl font-bold lg:whitespace-nowrap">
+            <span className="-ml-[1px] text-gray-800">Стань новым Да Винчи</span>
+            <span className="text-3xl text-indigo-600">с картинами собранными из лего</span>
           </h1>
 
-          <p className="mt-4 text-lg text-zinc-600">
-            Просто выбери свою любимую фотографию и собери по ней уникальную картину по номерам!
+          <p className="grid grid-rows-2 text-gray-500 sm:text-lg md:text-xl">
+            <span>Просто выбери свою любимую фотографию и</span>
+            <span>раскрась по ней уникальную картину по номерам!</span>
           </p>
-
-          <div className="mt-14">
-            <Link href="/">
-              <a className="button-primary inline-block w-full py-4 px-10 text-xl focus:ring-offset-zinc-200 lg:w-auto">
-                <div className="flex-center">
-                  <span>Перейти к созданию картины</span>
-                  <FastArrowRight className="ml-2 mt-1 h-12 w-12" />
-                </div>
-              </a>
-            </Link>
-          </div>
         </div>
 
-        <Preview
-          className="aspect-w-2 aspect-h-1 w-full ring-offset-zinc-200 lg:w-1/2"
-          href="/"
-          title="Бесплатный показ"
-          subtitle="Позволит оценить будущую картину до совершения реальной покупки 👀"
-          src="/static/images/shopping-cart-product-01.jpg"
-          alt="123"
-        />
+        <div className="mt-4 flex flex-grow items-end">
+          <ButtonLink
+            href="/editor-intro"
+            buttonType="primary-outline"
+            className="w-72 space-x-2 text-indigo-500"
+          >
+            <span>Бесплатное демо</span>
+            <ArrowRight className="opacity-75" strokeWidth={1.6} />
+          </ButtonLink>
+        </div>
       </div>
-    </div>
+
+      <div className="relative h-[340px] lg:w-[420px]">
+        <Carousel
+          classNameDots="bottom-12"
+          slides={[
+            <CarouselSlide
+              key="01"
+              className="-top-4 -left-4 h-[380px] w-[420px]"
+              src="/static/images/LandingPage/HeroSection/01.jpg"
+              alt="Alternative text for image"
+            />,
+            <CarouselSlide
+              key="02"
+              className="-top-4 -left-4 h-[380px] w-[420px]"
+              src="/static/images/LandingPage/HeroSection/02.jpg"
+              alt="Alternative text for image"
+            />,
+            <CarouselSlide
+              key="03"
+              className="-top-4 -left-4 h-[380px] w-[420px]"
+              src="/static/images/LandingPage/HeroSection/03.jpg"
+              alt="Alternative text for image"
+            />,
+            <CarouselSlide
+              key="04"
+              className="-top-4 -left-4 h-[380px] w-[420px]"
+              src="/static/images/LandingPage/HeroSection/04.jpg"
+              alt="Alternative text for image"
+            />,
+            <CarouselSlide
+              key="05"
+              className="-top-4 -left-4 h-[380px] w-[420px]"
+              src="/static/images/LandingPage/HeroSection/05.jpg"
+              alt="Alternative text for image"
+            />,
+            <CarouselSlide
+              key="06"
+              className="-top-4 -left-4 h-[380px] w-[420px]"
+              src="/static/images/LandingPage/HeroSection/06.jpg"
+              alt="Alternative text for image"
+            />,
+            <CarouselSlide
+              key="07"
+              className="-top-4 -left-4 h-[380px] w-[420px]"
+              src="/static/images/LandingPage/HeroSection/07.jpg"
+              alt="Alternative text for image"
+            />,
+            <CarouselSlide
+              key="08"
+              className="-top-4 -left-4 h-[380px] w-[420px]"
+              src="/static/images/LandingPage/HeroSection/08.jpg"
+              alt="Alternative text for image"
+            />,
+            <CarouselSlide
+              key="09"
+              className="-top-4 -left-4 h-[380px] w-[420px]"
+              src="/static/images/LandingPage/HeroSection/09.jpg"
+              alt="Alternative text for image"
+            />
+          ]}
+        />
+
+        <svg
+          className="absolute -left-12 -top-[1px] -bottom-[1px] -ml-[1px] hidden h-full w-24 text-white lg:block"
+          fill="currentColor"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <polygon points="50, 0 100, 0 50, 100 0, 100" />
+        </svg>
+      </div>
+    </section>
   );
 }

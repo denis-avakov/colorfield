@@ -1,15 +1,62 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import type { ReactNode } from 'react';
+import classNames from 'utils/classNames';
+import type { ReactNode } from 'utils/types';
 
-type DialogContentProps = {
+type ModalContentProps = {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: ReactNode;
+  classNameWrapper?: any;
 };
 
-export default function DialogContent(props: DialogContentProps) {
+export function SidebarDialogContent(props: ModalContentProps) {
+  return (
+    <Transition appear show={props.isOpen} as={Fragment}>
+      <Dialog as="div" className="fixed inset-0 z-10" onClose={props.onClose}>
+        <div className="wrapper flex min-h-screen items-start justify-end">
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-20" />
+          </Transition.Child>
+
+          <Transition.Child
+            as={Fragment}
+            enter="transition ease-out duration-200"
+            enterFrom="opacity-0 translate-y-1"
+            enterTo="opacity-100 translate-y-0"
+            leave="transition ease-in duration-150"
+            leaveFrom="opacity-100 translate-y-0"
+            leaveTo="opacity-0 translate-y-1"
+          >
+            <div
+              className={classNames(
+                'mt-[5.5rem] w-full max-w-xs transform rounded-lg bg-white px-4 py-5 shadow-lg transition-all',
+                props.classNameWrapper
+              )}
+            >
+              <Dialog.Title as="h3" className="sr-only">
+                {props.title}
+              </Dialog.Title>
+
+              {props.children}
+            </div>
+          </Transition.Child>
+        </div>
+      </Dialog>
+    </Transition>
+  );
+}
+
+export function DialogContent(props: ModalContentProps) {
   return (
     <Transition appear show={props.isOpen} as={Fragment}>
       <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={props.onClose}>

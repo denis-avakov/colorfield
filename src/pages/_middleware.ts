@@ -6,11 +6,11 @@ export function middleware(request: NextRequest, event: NextFetchEvent) {
     default-src 'self';
     script-src 'self' 'unsafe-eval' 'unsafe-inline' *.youtube.com;
     child-src *.youtube.com *.google.com;
-    style-src 'self' 'unsafe-inline' *.googleapis.com rsms.me;
+    style-src 'self' 'unsafe-inline' *.googleapis.com;
     img-src * blob: data:;
     media-src 'none';
     connect-src *;
-    font-src 'self' rsms.me;
+    font-src 'self' fonts.gstatic.com;
   `;
 
   const response = NextResponse.next();
