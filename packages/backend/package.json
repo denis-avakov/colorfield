@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "start": "ts-node ./src/paint-by-numbers",
+    "start": "node ./src/index.js",
     "dev": "ts-node-dev ./src/index.ts"
   },
   "dependencies": {

@@ -149,10 +149,10 @@ app.post('/upload', upload.single('image'), async (request: any, response: any) 
     });
 
     return response.json({
-      preview: `http://localhost:8080/output/${imageName}-preview.jpg`,
-      guide: `http://localhost:8080/output/${imageName}-guide.png`,
-      withColors: `http://localhost:8080/output/${imageName}-with-colors.png`,
-      withBorders: `http://localhost:8080/output/${imageName}-with-borders.svg`
+      preview: `http://84.38.180.139:8080/output/${imageName}-preview.jpg`,
+      guide: `http://84.38.180.139:8080/output/${imageName}-guide.png`,
+      withColors: `http://84.38.180.139:8080/output/${imageName}-with-colors.png`,
+      withBorders: `http://84.38.180.139:8080/output/${imageName}-with-borders.svg`
     });
   } catch (error) {
     response.send('not ok', { code: 500 });
@@ -164,5 +164,5 @@ app.use((request, response, next) => {
 });
 
 app.listen(8080, () => {
-  console.log('🔥 Server ready at: http://localhost:8080');
+  console.log('🔥 Server ready at: http://84.38.180.139:8080/');
 });

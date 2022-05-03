@@ -32,7 +32,7 @@ export default function HeroSection(props: HeroSectionProps) {
 
         <div className="mt-4 flex flex-grow items-end">
           <ButtonLink
-            href="/editor-intro"
+            href="/editor"
             buttonType="primary-outline"
             className="w-72 space-x-2 text-indigo-500"
           >
