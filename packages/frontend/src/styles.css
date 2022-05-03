@@ -1,0 +1,80 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+.react-colorful {
+  width: auto !important;
+  height: auto !important;
+}
+
+.react-colorful__saturation {
+  display: none !important;
+}
+
+.react-colorful__last-control {
+  border-radius: 6px !important;
+}
+
+@layer base {
+  ::selection {
+    @apply bg-blue-800 text-blue-50;
+  }
+
+  html {
+    @apply min-w-[360px] scroll-smooth;
+  }
+
+  body {
+    @apply bg-gray-100 font-[Inter] text-slate-600;
+  }
+
+  #__next {
+    @apply flex min-h-screen flex-col;
+  }
+}
+
+@layer components {
+  .wrapper {
+    @apply mx-auto w-full max-w-5xl px-4 md:px-8;
+  }
+
+  .button-base {
+    @apply active flex items-center justify-center rounded-lg px-8 py-3.5 text-base font-semibold transition-colors focus:outline-none;
+  }
+
+  .button-primary {
+    @apply button-base border-2 border-indigo-400 bg-indigo-100 bg-opacity-75 text-lg text-indigo-500;
+    @apply hover:border-indigo-500 hover:bg-indigo-200;
+    @apply focus-visible:border-indigo-500 focus-visible:bg-indigo-200;
+  }
+
+  .button-primary-outline {
+    @apply button-base border-2 border-transparent bg-indigo-100 bg-opacity-75 text-lg text-indigo-600;
+    @apply hover:border-indigo-500 hover:bg-indigo-200;
+    @apply focus-visible:border-indigo-600 focus-visible:bg-indigo-200;
+  }
+
+  .button-secondary {
+    @apply button-base border-2 border-zinc-400 bg-zinc-100 bg-opacity-75 text-lg text-zinc-500;
+    @apply hover:border-zinc-500 hover:bg-zinc-200;
+    @apply focus-visible:border-zinc-500 focus-visible:bg-zinc-200;
+  }
+
+  .button-flat {
+    @apply button-base rounded-lg border-2 border-transparent bg-slate-200 hover:bg-slate-300 focus-visible:border-slate-400;
+  }
+}
+
+@layer utilities {
+  .focus {
+    @apply focus:outline-none focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-zinc-500;
+  }
+
+  .active {
+    @apply active:translate-y-1 active:transition-transform;
+  }
+
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+}

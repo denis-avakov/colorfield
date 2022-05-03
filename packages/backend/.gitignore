@@ -1,8 +1,6 @@
 # Include your project-specific ignores in this file
 # Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
 
-# node.js dependencies
-node_modules
-
-# environment variables
-.env
+# public
+public/output
+public/uploads
