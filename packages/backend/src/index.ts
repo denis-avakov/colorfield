@@ -10,9 +10,21 @@ import * as Prisma from '@prisma/client';
 import * as nodemailer from 'nodemailer';
 
 import fromHex from '@fantasy-color/from-hex';
+import * as io from '@pm2/io';
 const nodeHtmlToImage = require('node-html-to-image');
 
 import paintByNumbers from './paint-by-numbers';
+
+io.init({
+  catchExceptions: true,
+  metrics: {
+    network: true,
+    http: true
+  },
+  tracing: {
+    enabled: true
+  }
+});
 
 var storage = multer.diskStorage({
   destination: function (request, file, cb) {
@@ -143,19 +155,22 @@ app.post('/upload', upload.single('image'), async (request: any, response: any) 
       return createColorUnit(key, `rgb(${value.color.join(',')})`);
     });
 
-    await nodeHtmlToImage({
-      output: `./public/output/${imageName}-guide.png`,
-      html: createWrapper(colorSchemeHTMLs.join(''))
-    });
+    console.log('path1', path.join(__dirname, `../public/output/${imageName}.json`));
+    console.log('path2', path.join(__dirname, `../public/output/${imageName}-guide.png`));
 
-    return response.json({
+    // await nodeHtmlToImage({
+    //   output: path.join(__dirname, `../public/output/${imageName}-guide.png`),
+    //   html: createWrapper(colorSchemeHTMLs.join(''))
+    // });
+
+    return response.status(200).json({
       preview: `http://84.38.180.139:8080/output/${imageName}-preview.jpg`,
       guide: `http://84.38.180.139:8080/output/${imageName}-guide.png`,
       withColors: `http://84.38.180.139:8080/output/${imageName}-with-colors.png`,
       withBorders: `http://84.38.180.139:8080/output/${imageName}-with-borders.svg`
     });
   } catch (error) {
-    response.send('not ok', { code: 500 });
+    response.status(500).json({ data: 'not ok' });
   }
 });
 

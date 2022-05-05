@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import { ArrowRight } from 'iconoir-react';
-import { isEmpty } from 'lodash';
 import classNames from 'utils/classNames';
 
 import ProductShowcase from 'components/Shop/ProductShowcase';
@@ -12,16 +11,7 @@ type CatalogPreviewProps = {
 };
 
 export default function CatalogPreview(props: CatalogPreviewProps) {
-  const [randomProducts, setRandomProducts] = useState([]);
-
-  useEffect(() => {
-    async function fetchProducts() {
-      const response = await fetch('/api/random-products');
-      setRandomProducts(await response.json());
-    }
-
-    fetchProducts();
-  }, []);
+  const { data, error } = useSWR('/api/random-products');
 
   return (
     <section className={classNames('w-full space-y-8', props.className)}>
@@ -30,10 +20,10 @@ export default function CatalogPreview(props: CatalogPreviewProps) {
       </h1>
 
       <div className="flex flex-wrap items-center justify-center gap-4 lg:flex-nowrap">
-        {isEmpty(randomProducts) ? (
+        {!data ? (
           <Spinner />
         ) : (
-          randomProducts.map((product: any) => <ProductShowcase key={product.id} {...product} />)
+          data.map((product: any) => <ProductShowcase key={product.id} {...product} />)
         )}
       </div>
 
