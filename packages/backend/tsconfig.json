@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "strict": true,
     "noImplicitReturns": true,

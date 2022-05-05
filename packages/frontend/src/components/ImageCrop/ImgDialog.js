@@ -138,11 +138,11 @@ class ImgDialog extends React.Component {
                       'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                      email: this.state.email
-                      // preview: `http://localhost:8080/output/${imageName}-preview.jpg`,
-                      // guide: `http://localhost:8080/output/${imageName}-guide.png`,
-                      // withColors: `http://localhost:8080/output/${imageName}-with-colors.png`,
-                      // withBorders: `http://localhost:8080/output/${imageName}-with-borders.svg`
+                      email: this.state.email,
+                      preview: `https://colorfield.denis-avakov.ru/output/${imageName}-preview.jpg`,
+                      guide: `https://colorfield.denis-avakov.ru/output/${imageName}-guide.png`,
+                      withColors: `https://colorfield.denis-avakov.ru/output/${imageName}-with-colors.png`,
+                      withBorders: `https://colorfield.denis-avakov.ru/output/${imageName}-with-borders.svg`
                     })
                   });
 

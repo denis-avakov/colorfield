@@ -10,8 +10,8 @@ import * as Prisma from '@prisma/client';
 import * as nodemailer from 'nodemailer';
 
 import fromHex from '@fantasy-color/from-hex';
+import * as puppeteer from 'puppeteer';
 import * as io from '@pm2/io';
-const nodeHtmlToImage = require('node-html-to-image');
 
 import paintByNumbers from './paint-by-numbers';
 
@@ -155,19 +155,36 @@ app.post('/upload', upload.single('image'), async (request: any, response: any) 
       return createColorUnit(key, `rgb(${value.color.join(',')})`);
     });
 
-    console.log('path1', path.join(__dirname, `../public/output/${imageName}.json`));
-    console.log('path2', path.join(__dirname, `../public/output/${imageName}-guide.png`));
+    console.log('Генерация цветов по номерам...');
 
-    // await nodeHtmlToImage({
-    //   output: path.join(__dirname, `../public/output/${imageName}-guide.png`),
-    //   html: createWrapper(colorSchemeHTMLs.join(''))
-    // });
+    try {
+      await fs.writeFileSync(
+        'public/output/' + imageName + '.html',
+        createWrapper(colorSchemeHTMLs.join(''))
+      );
+
+      const browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+        ignoreDefaultArgs: ['--disable-extensions'],
+        slowMo: 100
+      });
+
+      const page = await browser.newPage();
+      await page.goto('https://colorfield.denis-avakov.ru/output/' + imageName + '.html');
+      await page.screenshot({ path: `public/output/${imageName}-guide.png` });
+      await browser.close();
+    } catch (error) {
+      console.log('puppeteer', error);
+    }
+
+    console.log('Генерация цветов по номерам... готова');
+    console.log('Все готово!');
 
     return response.status(200).json({
-      preview: `http://84.38.180.139:8080/output/${imageName}-preview.jpg`,
-      guide: `http://84.38.180.139:8080/output/${imageName}-guide.png`,
-      withColors: `http://84.38.180.139:8080/output/${imageName}-with-colors.png`,
-      withBorders: `http://84.38.180.139:8080/output/${imageName}-with-borders.svg`
+      preview: `https://colorfield.denis-avakov.ru/output/${imageName}-preview.jpg`,
+      guide: `https://colorfield.denis-avakov.ru/output/${imageName}-guide.png`,
+      withColors: `https://colorfield.denis-avakov.ru/output/${imageName}-with-colors.png`,
+      withBorders: `https://colorfield.denis-avakov.ru/output/${imageName}-with-borders.svg`
     });
   } catch (error) {
     response.status(500).json({ data: 'not ok' });
@@ -178,6 +195,6 @@ app.use((request, response, next) => {
   response.status(404).json({ data: "Sorry can't find that!" });
 });
 
-app.listen(8080, () => {
-  console.log('🔥 Server ready at: http://84.38.180.139:8080/');
+app.listen(80, () => {
+  console.log('🔥 Server ready at: http://127.0.0.1/');
 });

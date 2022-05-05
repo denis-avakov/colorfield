@@ -42,7 +42,7 @@ const Demo = ({ classes, colorScheme = [] }) => {
 
       setIsLoading(true);
 
-      const result = await fetch('http://84.38.180.139:8080/upload', {
+      const result = await fetch('https://colorfield.denis-avakov.ru/upload', {
         method: 'POST',
         body: formData
       }).then((response) => response.json());
