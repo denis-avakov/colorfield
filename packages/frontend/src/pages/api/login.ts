@@ -7,9 +7,9 @@ export default withIronSessionApiRoute(async (req: NextApiRequest, res: NextApiR
   const { accessCode } = await req.body;
 
   try {
-    const order = await prisma.order.findFirst({
+    const order = await prisma.accessCode.findFirst({
       where: {
-        access_code: accessCode
+        code: accessCode
       }
     });
 
