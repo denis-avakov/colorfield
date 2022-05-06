@@ -1,0 +1,95 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  orders Order [not null]
+  genPictures GenPicture [not null]
+}
+
+Table Order {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  buyer User [not null]
+  buyerId String [not null]
+  email String
+  phone String
+  firstName String
+  secondName String
+  deliveryType String
+  paymentType String
+  city String
+  address String
+  zip String
+  comment String
+  products OrderItem [not null]
+  accessCode AccessCode
+  coupon Coupon
+  couponId String
+}
+
+Table OrderItem {
+  id String [pk]
+  order Order [not null]
+  orderId String [not null]
+  productId String [not null]
+  quantity Int [not null, default: 1]
+}
+
+Table AccessCode {
+  id String [pk]
+  order Order [not null]
+  orderId String [unique, not null]
+  code String [unique, not null]
+  active Boolean [not null, default: false]
+}
+
+Table Coupon {
+  id String [pk]
+  order Order [not null]
+  code String [not null]
+  discount Int [not null]
+}
+
+Table Product {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  name String [not null]
+  features String[] [not null]
+  price Int [not null]
+  images ProductImage [not null]
+  imageIds String[] [not null]
+}
+
+Table ProductImage {
+  id String [pk]
+  product Product [not null]
+  productId String[] [not null]
+  src String [not null]
+  alt String [not null]
+}
+
+Table GenPicture {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  author User [not null]
+  authorId String [not null]
+  src String [not null]
+  isDeleted Boolean [not null, default: false]
+}
+
+Ref: Order.buyerId > User.id
+
+Ref: Order.couponId > Coupon.id
+
+Ref: OrderItem.orderId > Order.id
+
+Ref: AccessCode.orderId - Order.id
+
+Ref: Product.imageIds > ProductImage.id
+
+Ref: ProductImage.productId > Product.id
+
+Ref: GenPicture.authorId > User.id
