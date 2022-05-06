@@ -42,10 +42,17 @@ const Demo = ({ classes, colorScheme = [] }) => {
 
       setIsLoading(true);
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 600000);
+
       const result = await fetch('https://colorfield.denis-avakov.ru/upload', {
         method: 'POST',
-        body: formData
-      }).then((response) => response.json());
+        body: formData,
+        signal: controller.signal
+      }).then((response) => {
+        clearTimeout(timeoutId);
+        return response.json();
+      });
 
       setIsLoading(false);
       setCroppedImage(result.preview);
