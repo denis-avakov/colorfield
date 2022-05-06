@@ -35,7 +35,7 @@ async function main(imagePath: string, outputName: string, options?: any) {
     resizeImageHeight: 1024,
     outputProfiles: [
       {
-        name: 'with-colors',
+        name: 'guide-with-colors',
         svgShowLabels: true,
         svgFillFacets: true,
         svgShowBorders: true,
@@ -45,7 +45,7 @@ async function main(imagePath: string, outputName: string, options?: any) {
         filetype: 'png'
       },
       {
-        name: 'with-borders',
+        name: 'guide-without-colors',
         svgShowLabels: true,
         svgFillFacets: false,
         svgShowBorders: true,

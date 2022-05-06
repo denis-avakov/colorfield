@@ -54,7 +54,7 @@ class ImgDialog extends React.Component {
     return (
       <Dialog
         fullScreen
-        open={!!this.props.img}
+        open={!!this.props.preview}
         onClose={this.props.onClose}
         TransitionComponent={Transition}
       >
@@ -72,15 +72,13 @@ class ImgDialog extends React.Component {
           </AppBar>
 
           <div className={classes.imgContainer}>
-            <img src={this.props.img} alt="Cropped" className={classes.img} />
+            <img src={this.props.preview} alt="Cropped" className={classes.img} />
           </div>
 
           <div className="flex flex-col items-center justify-center space-y-6">
             <div className="flex flex-wrap items-center justify-center gap-4">
               <ButtonLink
-                href={
-                  this.props.img ? this.props.img.replace('preview.jpg', 'with-colors.png') : '/'
-                }
+                href={this.props.guideWithColors || '/'}
                 buttonType="primary-outline"
                 attrs={{
                   target: '_blank',
@@ -91,9 +89,7 @@ class ImgDialog extends React.Component {
               </ButtonLink>
 
               <ButtonLink
-                href={
-                  this.props.img ? this.props.img.replace('preview.jpg', 'with-borders.svg') : '/'
-                }
+                href={this.props.guideWithoutColors || '/'}
                 buttonType="primary-outline"
                 attrs={{
                   target: '_blank',
@@ -104,14 +100,14 @@ class ImgDialog extends React.Component {
               </ButtonLink>
 
               <ButtonLink
-                href={this.props.img ? this.props.img.replace('preview.jpg', 'guide.png') : '/'}
+                href={this.props.palette || '/'}
                 buttonType="primary-outline"
                 attrs={{
                   target: '_blank',
                   rel: 'noopener noreferrer'
                 }}
               >
-                Пронумерованные цвета
+                Палитра
               </ButtonLink>
             </div>
 
@@ -138,11 +134,7 @@ class ImgDialog extends React.Component {
                       'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                      email: this.state.email,
-                      preview: `https://colorfield.denis-avakov.ru/output/${imageName}-preview.jpg`,
-                      guide: `https://colorfield.denis-avakov.ru/output/${imageName}-guide.png`,
-                      withColors: `https://colorfield.denis-avakov.ru/output/${imageName}-with-colors.png`,
-                      withBorders: `https://colorfield.denis-avakov.ru/output/${imageName}-with-borders.svg`
+                      email: this.state.email
                     })
                   });
 

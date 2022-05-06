@@ -12,6 +12,7 @@ import { styles } from './styles';
 
 import Spinner from 'components/Spinner';
 import classNames from 'utils/classNames';
+import getGenPictures from 'utils/getGenPictures';
 
 const ORIENTATION_TO_ANGLE = {
   3: 180,
@@ -19,13 +20,24 @@ const ORIENTATION_TO_ANGLE = {
   8: -90
 };
 
+const BASE_URL = 'https://colorfield.denis-avakov.ru';
+
 const Demo = ({ classes, colorScheme = [] }) => {
+  const defaults = {
+    genPictures: {
+      preview: null,
+      palette: null,
+      guideWithColors: null,
+      guideWithoutColors: null
+    }
+  };
+
   const [imageSrc, setImageSrc] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [rotation, setRotation] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [croppedImage, setCroppedImage] = useState(null);
+  const [genPictures, setGenPictures] = useState(defaults.genPictures);
   const [isLoading, setIsLoading] = useState(false);
 
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
@@ -42,38 +54,26 @@ const Demo = ({ classes, colorScheme = [] }) => {
 
       setIsLoading(true);
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 600000);
-
-      const result = await fetch('https://colorfield.denis-avakov.ru/upload', {
+      const file = await fetch(`${BASE_URL}/upload`, {
         method: 'POST',
-        body: formData,
-        signal: controller.signal
-      }).then((response) => {
-        clearTimeout(timeoutId);
-        return response.json();
-      });
+        body: formData
+      }).then((response) => response.json());
+
+      await getGenPictures(file.token)
+        .then((paths) => setGenPictures(paths))
+        .catch((error) => {
+          console.log('Failed to ping assets', error);
+        });
 
       setIsLoading(false);
-      setCroppedImage(result.preview);
     } catch (error) {
       console.error(error);
     }
   }, [imageSrc, croppedAreaPixels, rotation, colorScheme]);
 
-  const showCroppedImage = useCallback(async () => {
-    try {
-      const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels, rotation);
-      console.log('donee', { croppedImage });
-      setCroppedImage(croppedImage);
-    } catch (error) {
-      console.error(error);
-    }
-  }, [imageSrc, croppedAreaPixels, rotation]);
-
   const onClose = useCallback(() => {
-    setCroppedImage(null);
-  }, []);
+    setGenPictures(defaults.genPictures);
+  }, [defaults.genPictures]);
 
   const onFileChange = async (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -157,7 +157,13 @@ const Demo = ({ classes, colorScheme = [] }) => {
               </Button>
             </div>
 
-            <ImgDialog img={croppedImage} onClose={onClose} />
+            <ImgDialog
+              preview={genPictures.preview}
+              palette={genPictures.palette}
+              guideWithColors={genPictures.guideWithColors}
+              guideWithoutColors={genPictures.guideWithoutColors}
+              onClose={onClose}
+            />
           </Fragment>
         ) : (
           <div className="flex items-center justify-center">

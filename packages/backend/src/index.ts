@@ -5,7 +5,6 @@ import * as express from 'express';
 import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 import * as multer from 'multer';
-import * as timeout from 'connect-timeout';
 
 import * as Prisma from '@prisma/client';
 import * as nodemailer from 'nodemailer';
@@ -15,6 +14,8 @@ import * as puppeteer from 'puppeteer';
 import * as io from '@pm2/io';
 
 import paintByNumbers from './paint-by-numbers';
+
+const BASE_URL = 'https://colorfield.denis-avakov.ru';
 
 io.init({
   catchExceptions: true,
@@ -73,19 +74,6 @@ const createColorUnit = (currentNumber: number, color: string) => {
 };
 
 app.get('/', async (request: any, response: any) => {
-  // await prisma.order.create({
-  //   data: {
-  //     access_code: '000000',
-  //     title: 'test',
-  //     body: 'test',
-  //     buyer: {
-  //       connect: {
-  //         id: '627037fb5ad1a9bb27019a27'
-  //       }
-  //     }
-  //   }
-  // });
-
   response.json({ data: 'Hi...' });
 });
 
@@ -128,74 +116,98 @@ app.get('/nodemailer', async (request: any, response: any) => {
   });
 });
 
-app.post(
-  '/upload',
-  timeout('600s'),
-  upload.single('image'),
-  async (request: any, response: any) => {
+app.get('/genPictures/:id', async (request: any, response: any) => {
+  try {
+    const paths = [
+      path.join(__dirname, `../public/output/${request.params.id}-preview.jpg`),
+      path.join(__dirname, `../public/output/${request.params.id}-palette.png`),
+      path.join(__dirname, `../public/output/${request.params.id}-guide-with-colors.png`),
+      path.join(__dirname, `../public/output/${request.params.id}-guide-without-colors.svg`)
+    ];
+
+    for (const currentPath of paths) {
+      console.log('currentPath', currentPath);
+      const isExist = await fs.existsSync(currentPath);
+
+      if (!isExist) {
+        throw new Error('Файлы еще не сгенерированы');
+      }
+    }
+
+    response.json({
+      data: {
+        preview: `${BASE_URL}/output/${request.params.id}-preview.jpg`,
+        palette: `${BASE_URL}/output/${request.params.id}-palette.png`,
+        guideWithColors: `${BASE_URL}/output/${request.params.id}-guide-with-colors.png`,
+        guideWithoutColors: `${BASE_URL}/output/${request.params.id}-guide-without-colors.svg`
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    return response.json({ data: false });
+  }
+});
+
+app.post('/upload', upload.single('image'), async (request: any, response: any) => {
+  try {
+    response.status(200).json({
+      token: request.file.filename.replace(/\.[^/.]+$/, '')
+    });
+
+    const imagePath = path.join(process.cwd(), request.file.path);
+    const imageName = request.file.filename.replace(/\.[^/.]+$/, '');
+
+    const colorScheme = request.body.colorScheme
+      ? request.body.colorScheme.split(',').map((color: string) => {
+          const rgb = fromHex('#' + color);
+          return [rgb!.red, rgb!.green, rgb!.blue];
+        })
+      : [];
+
+    await paintByNumbers(imagePath, imageName, {
+      kMeansColorRestrictions: colorScheme,
+      maximumNumberOfFacets: 10000
+    });
+
+    const guide = await fs.readFileSync(
+      path.join(__dirname, `../public/output/${imageName}.json`),
+      'utf8'
+    );
+
+    const guideData = JSON.parse(guide);
+
+    const colorSchemeHTMLs = guideData.map((value: any, key: number) => {
+      return createColorUnit(key, `rgb(${value.color.join(',')})`);
+    });
+
+    console.log('Генерация цветов по номерам...');
+
     try {
-      const imagePath = path.join(process.cwd(), request.file.path);
-      const imageName = request.file.filename.replace(/\.[^/.]+$/, '');
-
-      const colorScheme = request.body.colorScheme
-        ? request.body.colorScheme.split(',').map((color: string) => {
-            const rgb = fromHex('#' + color);
-            return [rgb!.red, rgb!.green, rgb!.blue];
-          })
-        : [];
-
-      await paintByNumbers(imagePath, imageName, {
-        kMeansColorRestrictions: colorScheme,
-        maximumNumberOfFacets: 10000
-      });
-
-      const guide = await fs.readFileSync(
-        path.join(__dirname, `../public/output/${imageName}.json`),
-        'utf8'
+      await fs.writeFileSync(
+        'public/output/' + imageName + '.html',
+        createWrapper(colorSchemeHTMLs.join(''))
       );
 
-      const guideData = JSON.parse(guide);
-
-      const colorSchemeHTMLs = guideData.map((value: any, key: number) => {
-        return createColorUnit(key, `rgb(${value.color.join(',')})`);
+      const browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+        ignoreDefaultArgs: ['--disable-extensions'],
+        slowMo: 100
       });
 
-      console.log('Генерация цветов по номерам...');
-
-      try {
-        await fs.writeFileSync(
-          'public/output/' + imageName + '.html',
-          createWrapper(colorSchemeHTMLs.join(''))
-        );
-
-        const browser = await puppeteer.launch({
-          args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
-          ignoreDefaultArgs: ['--disable-extensions'],
-          slowMo: 100
-        });
-
-        const page = await browser.newPage();
-        await page.goto('https://colorfield.denis-avakov.ru/output/' + imageName + '.html');
-        await page.screenshot({ path: `public/output/${imageName}-guide.png` });
-        await browser.close();
-      } catch (error) {
-        console.log('puppeteer', error);
-      }
-
-      console.log('Генерация цветов по номерам... готова');
-      console.log('Все готово!');
-
-      return response.status(200).json({
-        preview: `https://colorfield.denis-avakov.ru/output/${imageName}-preview.jpg`,
-        guide: `https://colorfield.denis-avakov.ru/output/${imageName}-guide.png`,
-        withColors: `https://colorfield.denis-avakov.ru/output/${imageName}-with-colors.png`,
-        withBorders: `https://colorfield.denis-avakov.ru/output/${imageName}-with-borders.svg`
-      });
+      const page = await browser.newPage();
+      await page.goto(`${BASE_URL}/output/${imageName}.html`);
+      await page.screenshot({ path: `public/output/${imageName}-palette.png` });
+      await browser.close();
     } catch (error) {
-      response.status(500).json({ data: 'not ok' });
+      console.log('puppeteer', error);
     }
+
+    console.log('Генерация цветов по номерам... готова');
+    console.log('Все готово!');
+  } catch (error) {
+    response.status(500).json({ data: 'not ok' });
   }
-);
+});
 
 app.use((request, response, next) => {
   response.status(404).json({ data: "Sorry can't find that!" });
