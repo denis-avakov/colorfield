@@ -3,7 +3,7 @@
   "scripts": {
     "start": "ts-node ./src/index.ts",
     "dev": "ts-node-dev ./src/index.ts",
-    "build": "tsc src/index.ts",
+    "build": "tsc src/paint-by-numbers/index.ts",
     "generate": "npx prisma generate",
     "studio": "npx prisma studio"
   },
