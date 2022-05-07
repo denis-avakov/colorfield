@@ -134,7 +134,7 @@ app.post('/upload', upload.single('image'), async (request: any, response: any) 
         })
       : [];
 
-    const genPicturesForked = fork('genPictures.ts', [imagePath, imageName, colorScheme]);
+    const genPicturesForked = fork('./src/genPictures.ts', [imagePath, imageName, colorScheme]);
 
     genPicturesForked.on('close', (code: any) => {
       console.log('child process exited with code ' + code);
